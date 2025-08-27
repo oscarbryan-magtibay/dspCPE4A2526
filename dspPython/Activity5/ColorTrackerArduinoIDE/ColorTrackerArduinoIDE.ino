@@ -1,7 +1,7 @@
 #include <ESP32Servo.h>
 
 Servo myServo;
-int servoPin = 23;
+int servoPin = 22;
 int currentPos = 90;   // Start at center
 
 void setup() {
