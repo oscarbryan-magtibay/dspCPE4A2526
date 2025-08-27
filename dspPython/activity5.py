@@ -6,11 +6,11 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from collections import deque
 
-# Connect to ESP32 (⚠️ Change COM5 to your port)
+
 esp = serial.Serial('COM13', 115200, timeout=1)
 time.sleep(2)
 
-# HSV ranges for different colors
+
 color_ranges = {
     "red1":   (np.array([0, 120, 70]), np.array([10, 255, 255])),
     "red2":   (np.array([170, 120, 70]), np.array([180, 255, 255])),
@@ -21,10 +21,10 @@ color_ranges = {
     "purple": (np.array([140, 100, 100]), np.array([160, 255, 255]))
 }
 
-# Open webcam
+
 cap = cv2.VideoCapture(0)
 
-# Tkinter GUI
+
 root = tk.Tk()
 root.title("Multi-Color Object Tracker")
 root.geometry("700x500")
@@ -32,7 +32,7 @@ root.geometry("700x500")
 panel = tk.Label(root)
 panel.pack()
 
-# Buffer for smoothing (moving average of last N positions)
+
 buffer_size = 5
 positions = deque(maxlen=buffer_size)
 
@@ -51,7 +51,7 @@ def update_frame():
 
     mask_total = np.zeros(hsv.shape[:2], dtype="uint8")
 
-    # Combine all color masks
+    
     for (lower, upper) in color_ranges.values():
         mask_total |= cv2.inRange(hsv, lower, upper)
 
@@ -61,35 +61,35 @@ def update_frame():
         c = max(contours, key=cv2.contourArea)
         area = cv2.contourArea(c)
 
-        if area > 800:  # Ignore small noise
+        if area > 800:  
             (x, y, cw, ch) = cv2.boundingRect(c)
             obj_x = x + cw // 2
 
-            # Add to buffer for smoothing
+         
             positions.append(obj_x)
             smooth_x = int(np.mean(positions))
 
-            # Draw bounding box
+         
             cv2.rectangle(frame, (x, y), (x+cw, y+ch), (0, 255, 0), 2)
             cv2.circle(frame, (smooth_x, y + ch // 2), 5, (255, 0, 0), -1)
 
-            # Follow with deadzone
+          
             deadzone = 40
             if smooth_x < center_x - deadzone:
-                esp.write(b"L")   # move left
+                esp.write(b"L")   
             elif smooth_x > center_x + deadzone:
-                esp.write(b"R")   # move right
+                esp.write(b"R")  
             else:
-                esp.write(b"C")   # stay
+                esp.write(b"C")   
 
-    # Show in Tkinter
+   
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(img)
     imgtk = ImageTk.PhotoImage(image=img)
     panel.imgtk = imgtk
     panel.config(image=imgtk)
 
-    root.after(30, update_frame)  # slower updates for stability
+    root.after(30, update_frame) 
 
 def on_closing():
     cap.release()
