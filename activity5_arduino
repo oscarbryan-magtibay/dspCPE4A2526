@@ -1,0 +1,30 @@
+#include <Servo.h>
+
+Servo servoX;
+Servo servoY;
+
+int xPos = 90;  // initial servo position
+int yPos = 90;
+
+void setup() {
+  servoX.attach(9);  // X-axis servo
+  servoY.attach(10); // Y-axis servo
+  servoX.write(xPos);
+  servoY.write(yPos);
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char axis = Serial.read();
+    if (axis == 'X') {
+      xPos = Serial.parseInt();
+      xPos = constrain(xPos, 0, 180);
+      servoX.write(xPos);
+    } else if (axis == 'Y') {
+      yPos = Serial.parseInt();
+      yPos = constrain(yPos, 0, 180);
+      servoY.write(yPos);
+    }
+  }
+}
