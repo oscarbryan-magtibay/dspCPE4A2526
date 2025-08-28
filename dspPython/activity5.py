@@ -10,15 +10,7 @@ esp = serial.Serial('COM5', 115200, timeout=1)
 time.sleep(2)
 
 color_ranges = {
-    "red1":   (np.array([0, 120, 70]), np.array([10, 255, 255])),
-    "red2":   (np.array([170, 120, 70]), np.array([180, 255, 255])),
-    "green":  (np.array([35, 100, 100]), np.array([85, 255, 255])),
-    "blue":   (np.array([100, 150, 0]), np.array([140, 255, 255])),
-    "yellow": (np.array([20, 100, 100]), np.array([30, 255, 255])),
-    "orange": (np.array([10, 100, 100]), np.array([20, 255, 255])),
-    "purple": (np.array([140, 100, 100]), np.array([160, 255, 255])),
-    "cyan":   (np.array([85, 100, 100]), np.array([95, 255, 255])),
-    "pink":   (np.array([160, 100, 100]), np.array([170, 255, 255]))
+    "peach": (np.array([5, 50, 150]), np.array([15, 150, 255]))
 }
 
 cap = cv2.VideoCapture(1)
