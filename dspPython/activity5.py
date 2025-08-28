@@ -5,19 +5,19 @@ import serial
 import time
 
 #Configurations
-COM_PORT = 'COM9'
-BAUD_RATE = 115200
-CAMERA_INDEX = 2
-INITIAL_ANGLE = 90
-SERVO_MIN_ANGLE = 0
-SERVO_MAX_ANGLE = 180
+com_port = 'COM9'
+baud_rate = 115200
+camera_index = 2
+initial_angle = 90
+servo_min_angle = 0
+servo_max_angle = 180
 
 #Servo Parameters
-PIXEL_DEADBAND = 20
-PROPORTIONAL_GAIN = 0.15
-SERIAL_SEND_INTERVAL = 0.05
-MAX_ANGLE_STEP = 5
-MAX_FRAMES_MISSING = 5
+pixel_deadband = 20
+proportional_gain = 0.15
+serial_interval = 0.05
+max_angle_step = 5
+max_frames_missing = 5
 
 #HSV Range
 BLUE_LOWER = np.array([100, 150, 50])
@@ -26,24 +26,24 @@ BLUE_UPPER = np.array([130, 255, 255])
 #Serial Initialization
 serial_conn = None
 try:
-    serial_conn = serial.Serial(COM_PORT, BAUD_RATE, timeout=0)
+    serial_conn = serial.Serial(com_port, baud_rate, timeout=0)
     time.sleep(0.5)
-    serial_conn.write(f"A:{INITIAL_ANGLE}\n".encode())
-    print(f"Successfully connected to ESP32 on {COM_PORT}")
+    serial_conn.write(f"A:{initial_angle}\n".encode())
+    print(f"Successfully connected to ESP32 on {com_port}")
 except Exception as e:
-    print(f"Failed to connect to {COM_PORT}: {e}")
+    print(f"Failed to connect to {com_port}: {e}")
 
 #Camera Initialization
-camera = cv2.VideoCapture(CAMERA_INDEX)
+camera = cv2.VideoCapture(camera_index)
 camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 if not camera.isOpened():
-    raise RuntimeError(f"Could not open camera at index {CAMERA_INDEX}")
+    raise RuntimeError(f"Could not open camera at index {camera_index}")
 
 #Tracking Variables
-current_servo_angle = INITIAL_ANGLE
-last_sent_angle = INITIAL_ANGLE
+current_servo_angle = initial_angle
+last_sent_angle = initial_angle
 last_send_time = 0
 previous_target_cx = None
 frames_missing = 0
@@ -73,7 +73,7 @@ while True:
             cv2.circle(frame, (target_cx, y + h // 2), 5, (0, 0, 255), -1)
     else:
         frames_missing += 1
-        if frames_missing <= MAX_FRAMES_MISSING and previous_target_cx is not None:
+        if frames_missing <= max_frames_missing and previous_target_cx is not None:
             target_cx = previous_target_cx
         else:
             target_cx = None
@@ -87,15 +87,15 @@ while True:
     if target_cx is not None:
         error = target_cx - center_x
 
-        if abs(error) > PIXEL_DEADBAND:
-            delta_angle = int(PROPORTIONAL_GAIN * error)
-            delta_angle = max(-MAX_ANGLE_STEP, min(MAX_ANGLE_STEP, delta_angle))
+        if abs(error) > pixel_deadband:
+            delta_angle = int(proportional_gain * error)
+            delta_angle = max(-max_angle_step, min(max_angle_step, delta_angle))
 
             new_servo_angle = current_servo_angle + delta_angle
-            new_servo_angle = max(SERVO_MIN_ANGLE, min(SERVO_MAX_ANGLE, new_servo_angle))
+            new_servo_angle = max(servo_min_angle, min(servo_min_angle, new_servo_angle))
 
             current_time = time.time()
-            if serial_conn and (new_servo_angle != last_sent_angle) and (current_time - last_send_time > SERIAL_SEND_INTERVAL):
+            if serial_conn and (new_servo_angle != last_sent_angle) and (current_time - last_send_time > serial_interval):
                 serial_conn.write(f"A:{new_servo_angle}\n".encode())
                 last_send_time = current_time
                 last_sent_angle = new_servo_angle
