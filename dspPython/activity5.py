@@ -9,6 +9,7 @@ from collections import deque
 esp = serial.Serial('COM5', 115200, timeout=1)
 time.sleep(2)
 
+
 color_ranges = {
     "peach": (np.array([5, 50, 150]), np.array([15, 150, 255]))
 }
