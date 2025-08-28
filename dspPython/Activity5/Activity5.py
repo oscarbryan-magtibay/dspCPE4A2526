@@ -10,7 +10,7 @@ esp = serial.Serial('COM5', 115200, timeout=1)
 time.sleep(2)
 
 color_ranges = {
-    "yellow": (np.array([20, 100, 100]), np.array([30, 255, 255])),
+    "grey": (np.array([0, 0, 50]), np.array([180, 50, 200]))
   
 }
 
