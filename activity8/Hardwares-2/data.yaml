@@ -1,0 +1,12 @@
+names:
+- guitar
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: hardwares-1gzqs
+  url: https://universe.roboflow.com/dsp-tl7qo/hardwares-1gzqs/dataset/2
+  version: 2
+  workspace: dsp-tl7qo
+test: ../test/images
+train: ../train/images
+val: ../valid/images
