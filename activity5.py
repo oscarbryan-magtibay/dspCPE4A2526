@@ -8,7 +8,7 @@ import cvzone
 ser = serial.Serial('COM12', 115200, timeout=1) 
 time.sleep(2)
 
-cap = cv2.VideoCapture(1) 
+cap = cv2.VideoCapture(0) 
 
 lower_red1 = np.array([0, 120, 70])   
 upper_red1 = np.array([10, 255, 255])
