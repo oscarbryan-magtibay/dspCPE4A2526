@@ -1,0 +1,12 @@
+names:
+- plate
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: car-plate-detector-x87mo
+  url: https://universe.roboflow.com/dsp-object-detection/car-plate-detector-x87mo/dataset/2
+  version: 2
+  workspace: dsp-object-detection
+test: ../test/images
+train: ../train/images
+val: ../valid/images
