@@ -1,0 +1,12 @@
+names:
+- Ballpen
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: objectdetection-aui7m
+  url: https://universe.roboflow.com/dspojalesjp-c5bqo/objectdetection-aui7m/dataset/1
+  version: 1
+  workspace: dspojalesjp-c5bqo
+test: ../test/images
+train: ../train/images
+val: ../valid/images
