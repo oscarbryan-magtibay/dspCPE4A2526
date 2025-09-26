@@ -1,0 +1,12 @@
+names:
+- license-plate
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: philippine-license-plates-mefb8
+  url: https://universe.roboflow.com/visionme/philippine-license-plates-mefb8/dataset/1
+  version: 1
+  workspace: visionme
+test: ../test/images
+train: ../train/images
+val: ../valid/images
