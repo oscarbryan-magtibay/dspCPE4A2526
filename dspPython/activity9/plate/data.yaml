@@ -1,0 +1,14 @@
+train: C:/Users/Username/Downloads/dspNamePlateV8 objects Visibilit.v2i.yolov8/train/images
+val: C:/Users/Username/Downloads/dspNamePlateV8 objects Visibilit.v2i.yolov8/val/images  # Newly created valid folder
+
+test: C:/Users/Username/Downloads/dspNamePlateV8 objects Visibilit.v2i.yolov8/test/images
+
+nc: 2
+names: ['Invalid', 'Text']
+
+roboflow:
+  workspace: joseph-bygbd
+  project: dspnameplatev8-objects-visibilit-g0zrh
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/joseph-bygbd/dspnameplatev8-objects-visibilit-g0zrh/dataset/2

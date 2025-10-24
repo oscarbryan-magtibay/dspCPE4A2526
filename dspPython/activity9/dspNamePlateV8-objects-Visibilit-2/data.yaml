@@ -1,0 +1,13 @@
+names:
+- Invalid
+- Text
+nc: 2
+roboflow:
+  license: CC BY 4.0
+  project: dspnameplatev8-objects-visibilit-g0zrh
+  url: https://universe.roboflow.com/joseph-bygbd/dspnameplatev8-objects-visibilit-g0zrh/dataset/2
+  version: 2
+  workspace: joseph-bygbd
+test: ../test/images
+train: ../train/images
+val: ../valid/images
