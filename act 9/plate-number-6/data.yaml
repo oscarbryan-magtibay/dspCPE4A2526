@@ -1,0 +1,12 @@
+names:
+- plate
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: plate-number-eovat
+  url: https://universe.roboflow.com/dsp-act-8/plate-number-eovat/dataset/6
+  version: 6
+  workspace: dsp-act-8
+test: ../test/images
+train: ../train/images
+val: ../valid/images
