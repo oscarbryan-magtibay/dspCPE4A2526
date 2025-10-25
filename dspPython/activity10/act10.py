@@ -4,11 +4,18 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
+# Configure API key for the generative AI model
 genai.configure(api_key="AIzaSyAzqyNbRDJ8THxqpGK_SXbqZaJgnf0w8bc")
 
 def choose_pdf_file():
+    """
+    Prompts the user to select a PDF file using a file dialog window.
+    
+    Returns:
+        str: The file path of the selected PDF file.
+    """
     root = tk.Tk()
-    root.withdraw()
+    root.withdraw()  # Hide the main tkinter window
     file_path = filedialog.askopenfilename(
         title="Select a PDF file",
         filetypes=[("PDF files", "*.pdf")],
@@ -16,6 +23,15 @@ def choose_pdf_file():
     return file_path
 
 def read_pdf_file(file_path):
+    """
+    Reads the content of a PDF file and extracts its text.
+    
+    Args:
+        file_path (str): The file path of the PDF to read.
+    
+    Returns:
+        str: Extracted text from the PDF file.
+    """
     try:
         if not os.path.exists(file_path):
             print(f"File not found: {file_path}")
@@ -27,9 +43,9 @@ def read_pdf_file(file_path):
                 text += page.get_text("text")
 
         if not text.strip():
-            print("The PDF file has no readable text (it might be scanned or image-only).")
+            print("The PDF file contains no readable text (it might be a scanned or image-only document).")
         else:
-            print(f"Successfully read content from '{os.path.basename(file_path)}'\n")
+            print(f"Successfully read content from '{os.path.basename(file_path)}'.\n")
 
         return text.strip()
 
@@ -38,8 +54,14 @@ def read_pdf_file(file_path):
         return ""
 
 def ask_question_about_pdf(text):
-    print("\nYou can now ask questions about the PDF content.")
-    print("Type 'exit' to quit.\n")
+    """
+    Allows the user to interactively ask questions based on the extracted text from the PDF.
+    
+    Args:
+        text (str): Extracted text from the PDF.
+    """
+    print("\nYou can now ask questions regarding the content of the PDF.")
+    print("Type 'exit' to terminate the session.\n")
 
     model = genai.GenerativeModel("gemini-2.5-flash")
     chat = model.start_chat(history=[])
@@ -47,15 +69,15 @@ def ask_question_about_pdf(text):
     while True:
         question = input("Ask: ")
         if question.lower() in ["exit", "quit"]:
-            print("Goodbye!")
+            print("Ending session. Goodbye.")
             break
 
         prompt = f"""
-You are an intelligent assistant. Based on the following story, answer the user's question accurately.
+You are an intelligent assistant. Based on the following content, provide an accurate response to the user's question.
 
---- STORY START ---
+--- CONTENT START ---
 {text[:20000]}
---- STORY END ---
+--- CONTENT END ---
 
 Question: {question}
 """
@@ -67,18 +89,18 @@ Question: {question}
             print(f"Error communicating with Gemini API: {e}")
 
 if __name__ == "__main__":
-    print("Please select a PDF file to analyze...\n")
+    print("Please select a PDF file for analysis...\n")
     pdf_path = choose_pdf_file()
 
     if not pdf_path:
-        print("No file selected. Exiting.")
+        print("No file selected. Exiting program.")
     else:
         print(f"Reading PDF file: {pdf_path}\n")
         text = read_pdf_file(pdf_path)
 
         if text:
             print("Extracted text preview:\n")
-            print(text[:500])
+            print(text[:500])  # Display first 500 characters as a preview
             ask_question_about_pdf(text)
         else:
-            print("No readable text found in the PDF.")
+            print("No readable text found in the selected PDF.")
