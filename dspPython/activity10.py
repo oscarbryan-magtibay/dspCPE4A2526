@@ -1,43 +1,35 @@
-
-
 import os
-import tkinter as tk
-from tkinter import filedialog
+import fitz
+import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyDrANZrCxd7fc2O3xR_Q5Af-6TuAnfSflE")
+# ----------------------- CONFIG -----------------------
+genai.configure(api_key="AIzaSyAaNou_zMFAF_5KCK7rtTHLDzkqOF44hAg")
 
-def choose_pdf_file():
-    root = tk.Tk()
-    root.withdraw()
-    file_path = filedialog.askopenfilename(
-        title="Select a PDF file",
-        filetypes=[("PDF files", "*.pdf")],
-    )
-    return file_path
-
-def read_pdf_file(file_path):
+# ----------------------- PDF READER -----------------------
+def read_pdf_file(file_path: str) -> str:
+    """Reads and extracts text from a PDF file."""
     try:
         if not os.path.exists(file_path):
             print(f"File not found: {file_path}")
             return ""
 
         with fitz.open(file_path) as pdf:
-            text = ""
-            for page in pdf:
-                text += page.get_text("text")
+            text_content = "".join(page.get_text("text") for page in pdf)
 
-        if not text.strip():
-            print("The PDF file has no readable text (it might be scanned or image-only).")
+        if text_content.strip():
+            print(f"Successfully read content from '{file_path}'\n")
         else:
-            print(f"Successfully read content from '{os.path.basename(file_path)}'\n")
+            print("The PDF file has no readable text (possibly image-only).")
 
-        return text.strip()
+        return text_content.strip()
 
-    except Exception as e:
-        print(f"Error reading PDF file: {e}")
+    except Exception as error:
+        print(f"Error reading PDF file: {error}")
         return ""
 
-def ask_question_about_pdf(text):
+# ----------------------- Q&A FUNCTION -----------------------
+def ask_question_about_pdf(text: str):
+    """Allows the user to ask questions about the PDF content interactively."""
     print("\nYou can now ask questions about the PDF content.")
     print("Type 'exit' to quit.\n")
 
@@ -46,8 +38,8 @@ def ask_question_about_pdf(text):
 
     while True:
         question = input("Ask: ")
-        if question.lower() in ["exit", "quit"]:
-            print("Goodbye!")
+        if question.lower() in ("exit", "quit"):
+            print("Goodbye.")
             break
 
         prompt = f"""
@@ -63,22 +55,19 @@ Question: {question}
         try:
             response = chat.send_message(prompt)
             print("\nAnswer:", response.text, "\n")
-        except Exception as e:
-            print(f"Error communicating with Gemini API: {e}")
+        except Exception as error:
+            print(f"Error communicating with Gemini API: {error}")
 
+# ----------------------- MAIN EXECUTION -----------------------
 if __name__ == "__main__":
-    print("Please select a PDF file to analyze...\n")
-    pdf_path = choose_pdf_file()
+    pdf_path = r"C:\Users\Janssen_Jude\Downloads\LastWish.pdf"
 
-    if not pdf_path:
-        print("No file selected. Exiting.")
+    print("Reading PDF file...\n")
+    pdf_text = read_pdf_file(pdf_path)
+
+    if pdf_text:
+        print("Extracted text preview:\n")
+        print(pdf_text[:500])
+        ask_question_about_pdf(pdf_text)
     else:
-        print(f"Reading PDF file: {pdf_path}\n")
-        text = read_pdf_file(pdf_path)
-
-        if text:
-            print("Extracted text preview:\n")
-            print(text[:500])
-            ask_question_about_pdf(text)
-        else:
-            print("No readable text found in the PDF.")
+        print("No readable text found in the PDF.")
