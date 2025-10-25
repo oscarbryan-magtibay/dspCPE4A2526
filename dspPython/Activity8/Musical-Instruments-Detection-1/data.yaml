@@ -1,0 +1,23 @@
+names:
+- Accordion
+- Clarinet
+- Daf
+- Flute
+- Guitar
+- Kamanche
+- Piano
+- Santur
+- Setar
+- Tombak
+- Tuba
+- Violin
+nc: 12
+roboflow:
+  license: CC BY 4.0
+  project: musical-instruments-detection-piiwk
+  url: https://universe.roboflow.com/dspemerging/musical-instruments-detection-piiwk/dataset/1
+  version: 1
+  workspace: dspemerging
+test: ../test/images
+train: ../train/images
+val: ../valid/images
