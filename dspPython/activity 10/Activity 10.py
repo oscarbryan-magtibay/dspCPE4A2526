@@ -4,7 +4,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
-genai.configure(api_key="AIzaSyDrANZrCxd7fc2O3xR_Q5Af-6TuAnfSflE")
+genai.configure(api_key="AIzaSyA8K3V-17gN7x5QfiwDo7D0aCtti08VPjk")
 
 def choose_pdf_file():
     root = tk.Tk()
