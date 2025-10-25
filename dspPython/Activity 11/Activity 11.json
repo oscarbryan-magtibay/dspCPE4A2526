@@ -1,0 +1,279 @@
+{
+  "name": "Jastillana",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        -96
+      ],
+      "id": "0a915b83-7cb1-4cf9-815d-1629c5d911fd",
+      "name": "When chat message received",
+      "webhookId": "c0803ed8-4dee-485b-bafc-d23c58049b76"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -96
+      ],
+      "id": "f6360278-8b91-4f6d-beb7-090c34dcb991",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        464,
+        80
+      ],
+      "id": "a8ad2408-3f88-44dc-bab7-d33909a17d77",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DgkMzPHLCCr325pT",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        80
+      ],
+      "id": "88405fdc-1ca2-456e-8e35-5f8d531dfafc",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "formTitle": "File",
+        "formDescription": "This workflow collects data submitted through an online form and automatically handles attached PDF files. When a user submits the form, their responses (such as name, email, and message) are captured, and any uploaded PDF document is stored or sent to the desired destination (e.g., Google Drive, email, or database). This automation helps organize submissions efficiently and ensures all PDF files are properly saved for future reference.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "File",
+              "fieldType": "file",
+              "acceptFileTypes": "pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        1104,
+        -16
+      ],
+      "id": "284b402c-c281-4502-93b6-ababb649ef20",
+      "name": "On form submission",
+      "webhookId": "86177930-b4a3-4b27-9369-522feb8fcc64"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "This workflow powers an AI question-answering system connected to a PDF knowledge base. It uses the Simple Vector Tool to generate text embeddings from uploaded PDF files, enabling the AI to understand and respond to user queries based on document content. The system automates the flow from PDF upload → vector embedding → AI response generation.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        48
+      ],
+      "id": "89955307-3c8b-402d-b943-03827bd54f7a",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        224
+      ],
+      "id": "65856cca-d3b8-491c-9688-cd07a2cd2190",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DgkMzPHLCCr325pT",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        -16
+      ],
+      "id": "b7fbd083-021a-4a61-b7af-f6895e0b7915",
+      "name": "Simple Vector Store1"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1264,
+        176
+      ],
+      "id": "1353b7aa-93df-463f-a9fe-8cf42660725f",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 200,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        320
+      ],
+      "id": "7522cfcc-e16b-401e-adb2-fc4a84118774",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "51f8bb72-225d-420e-90ec-5985246c37d4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0dfc81c8f2713673a57bf56a3aeb8351acd91b144ab5e0b80e1f8a04efcb1efd"
+  },
+  "id": "nF67vhgDcxto3ttK",
+  "tags": []
+}
