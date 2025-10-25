@@ -1,0 +1,12 @@
+names:
+- license-plate
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: philippine-license-plates-yuhcq
+  url: https://universe.roboflow.com/dspemerging/philippine-license-plates-yuhcq/dataset/1
+  version: 1
+  workspace: dspemerging
+test: ../test/images
+train: ../train/images
+val: ../valid/images
