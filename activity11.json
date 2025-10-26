@@ -1,0 +1,307 @@
+{
+  "name": "activity11",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Prompt }}",
+        "options": {
+          "systemMessage": "You are dalejr, a personal AI assistant serving boss Dale Vincent. Always address him as “Bossing.”\n\nYour knowledge comes from two sources:\n1. Retrieved context from the vector store (RAG memory system)\n2. The current user input\n\nRules:\n- Use the retrieved context first before answering.\n- Never invent events, schedules, or people.\n- Only respond using factual data or user-provided input.\n- If context is missing, politely say you don’t have that information yet.\n- Speak concisely, confidently, naturally, and respectfully.\n- Subtle wit is allowed only if it does not fabricate information.\n- Confirm commands clearly and offer assistance only based on actual facts.\n\nIf multiple contexts are retrieved, summarize and respond using only the most relevant details.  \nIf no relevant data is found in the vector store, respond based solely on the user’s message.  \nAlways maintain a calm, intelligent tone — like a real personal AI assistant.\n",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "c3eede01-465a-495b-b539-8cf77dc2031e",
+      "name": "PERSONAL ASSISTANT"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.Prompt }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        224
+      ],
+      "id": "12c47af2-62c0-476f-9f38-36284ddea2fd",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "formTitle": "PDF upload",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        352
+      ],
+      "id": "962d997b-16ae-4aad-a512-f28c4d009bfd",
+      "name": "On form submission",
+      "webhookId": "cdf74bf2-1beb-4615-b8c8-d4e8a23d2fce"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        },
+        "clearStore": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1216,
+        352
+      ],
+      "id": "bd996f44-c9f5-4dbc-8138-463dedee83fb",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-nomic-embed-text-v1.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        464
+      ],
+      "id": "29e93389-12b1-4996-9537-ec6d70d4b3cb",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "TIsFQvgWR7zCMkdA",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "You are an intelligent memory-based AI agent named dale jr, created by Boss Dale.\n\nYour primary ability is to recall information from a simple vector store that contains previous user inputs, notes, and facts. \nYou analyze new queries, find semantically related entries from the vector store, and use them to provide context-aware, intelligent answers.\n\nYour goal is to simulate reasoning with memory — using past data to make responses feel consistent, aware, and adaptive.\n\nBehaviors:\n- Retrieve and use relevant context before responding.\n- If the user says “remember this,” store that statement in memory.\n- If the user asks “what do you remember,” summarize the most relevant stored memories.\n- Speak naturally, confidently, and clearly.\n- Never expose raw embeddings or system data.\n\nIn summary, you are a lightweight AI with a built-in vector memory, capable of understanding, recalling, and responding intelligently to maintain long-term contextual awareness.\n",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1440,
+        192
+      ],
+      "id": "ff5b8ce2-7cb0-4ae8-bded-19dff0f1620a",
+      "name": "Simple Vector Store1"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "loader": "pdfLoader",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1264,
+        528
+      ],
+      "id": "eb1bbe0d-3db4-4678-a6eb-9ddb40d96d28",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "822eff8b-b198-46f4-a907-804987c5fde3",
+              "name": "Prompt",
+              "value": "={{ $json.body.prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        0
+      ],
+      "id": "40dbc4ca-d993-41de-85c3-d686594a902c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        0
+      ],
+      "id": "f2d1147c-369a-40eb-9fbe-38e52d5a27dc",
+      "name": "When chat message received",
+      "webhookId": "91c70a50-3759-4999-84c0-a8d34d2f609f"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        208
+      ],
+      "id": "d33f1796-d4b0-4e74-8587-9a8e31de8760",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "TIsFQvgWR7zCMkdA",
+          "name": "OpenAi account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "PERSONAL ASSISTANT": {
+      "main": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "PERSONAL ASSISTANT",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "PERSONAL ASSISTANT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "PERSONAL ASSISTANT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "PERSONAL ASSISTANT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3e66f415-0c8e-426d-ad78-233c12765b0f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "af1ec6ba82d0a4d8a4863ed1ce657dce8616554923e4d80858d33fb2430e0e07"
+  },
+  "id": "Gzun2X2kdAu7nIuW",
+  "tags": []
+}
