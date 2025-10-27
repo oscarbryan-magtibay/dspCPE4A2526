@@ -19,9 +19,9 @@ serial_interval = 0.05
 max_angle_step = 5
 max_frames_missing = 5
 
-#HSV Range for Beige
-BEIGE_LOWER = np.array([10, 30, 150])   # H = light orange/yellow, S = low-med, V = high
-BEIGE_UPPER = np.array([25, 100, 255])
+#HSV Range for Dark Blue
+lower_darkblue = np.array([100, 150, 50])
+upper_darkblue = np.array([130, 255, 255])
 
 #Serial Initialization
 serial_conn = None
@@ -57,7 +57,7 @@ while True:
 
     frame = cv2.flip(frame, 1)
     hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv_frame, BEIGE_LOWER, BEIGE_UPPER)
+    mask = cv2.inRange(hsv_frame, lower_darkblue, upper_darkblue)
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     target_cx = None
 
@@ -101,7 +101,7 @@ while True:
                 last_sent_angle = new_servo_angle
                 current_servo_angle = new_servo_angle
 
-        cv2.putText(frame, "Beige object detected",
+        cv2.putText(frame, "Dark Blue object detected",
                     (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.7,
