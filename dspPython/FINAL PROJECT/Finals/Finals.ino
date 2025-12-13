@@ -7,9 +7,9 @@
 #include <Adafruit_SSD1306.h>
 
 // --- WIFI SETTINGS ---
-const char* ssid = "YOUR_SSID";
-const char* password = "YOUR_PASSWORD";
-const char* serverURL = "http://yourserver.com/endpoint"; // replace with your server URL
+const char* ssid = "PLDTHOMEFIBRfm7TH_2.4G";
+const char* password = "Powppies_1921";
+const char* serverURL = "http://192.168.1.16:5000"; // replace with your server URL
 
 // --- RFID SETTINGS ---
 #define SS_PIN 5
