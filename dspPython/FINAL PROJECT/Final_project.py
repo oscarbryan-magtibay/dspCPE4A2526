@@ -9,7 +9,7 @@ import random
 OWNER_NAME = "Queenie Magcawas"
 OWNER_EMAIL = "2321197@ub.edu.ph"
 SENDER_EMAIL = "kwinimagcawas@gmail.com"
-SENDER_PASS = "KkaebsongBBH"  
+SENDER_PASS = "**********"  
 
 app = Flask(__name__)
 
