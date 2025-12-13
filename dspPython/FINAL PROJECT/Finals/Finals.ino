@@ -6,17 +6,14 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-// --- WIFI SETTINGS ---
 const char* ssid = "PLDTHOMEFIBRfm7TH_2.4G";
 const char* password = "Powppies_1921";
-const char* serverURL = "http://192.168.1.16:5000"; // replace with your server URL
+const char* serverURL = "http://192.168.1.16:5000"; 
 
-// --- RFID SETTINGS ---
 #define SS_PIN 5
 #define RST_PIN 27
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-// --- OLED SETTINGS ---
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET    -1
@@ -27,7 +24,6 @@ void setup() {
   SPI.begin();
   mfrc522.PCD_Init();
 
-  // Initialize OLED
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println("OLED init failed!");
     while (1);
@@ -39,7 +35,6 @@ void setup() {
   display.println("Scan your RFID card...");
   display.display();
 
-  // Connect WiFi
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -50,11 +45,10 @@ void setup() {
 }
 
 void loop() {
-  // Check if a new card is present
+
   if ( ! mfrc522.PICC_IsNewCardPresent()) return;
   if ( ! mfrc522.PICC_ReadCardSerial()) return;
 
-  // Build UID string
   String uidString = "";
   for (byte i = 0; i < mfrc522.uid.size; i++) {
     if(mfrc522.uid.uidByte[i] < 0x10) uidString += "0";
@@ -64,7 +58,6 @@ void loop() {
 
   Serial.println("Card UID: " + uidString);
 
-  // Display on OLED
   display.clearDisplay();
   display.setCursor(0, 0);
   display.println("RFID UID:");
@@ -72,7 +65,6 @@ void loop() {
   display.println(uidString);
   display.display();
 
-  // Send to server
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin(serverURL);
@@ -90,6 +82,6 @@ void loop() {
     Serial.println("WiFi not connected!");
   }
 
-  mfrc522.PICC_HaltA();  // Stop reading
-  delay(2000); // Small delay to avoid multiple reads
+  mfrc522.PICC_HaltA(); 
+  delay(2000); 
 }
