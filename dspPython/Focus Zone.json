@@ -1,0 +1,138 @@
+{
+  "name": "Focus Zone",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "focus-zone",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2e8ae3d5-dcbf-49f4-b28a-c2673fd300be",
+      "name": "Webhook",
+      "webhookId": "5174efca-cef0-443f-b8bb-087cf1e01973"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a strict but helpful Study Coach. I will send you sensor data from my study room. This data might be a \"Current Snapshot\" or a \"30-Minute Summary.\"\n\nData: {{ $json.body.data }}\n\nAnalyze this.\n1. Is the environment good for studying? (Ideal: 18-30C, 30-70% Hum, 0-500 Noise).\n\n2. If bad, tell me exactly what to fix.\n\n3. If this is a summary, summarize how the environment was for the last 30 minutes. (Don't start the sentence with question answering words like Yes or No).\n\n4.Keep it short (2 sentences max).\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3618b30d-ed3a-48a6-be65-53e63964e4ff",
+      "name": "Message a model",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Hd8ix6BcQTF4M1ZP",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "1620052@ub.edu.ph",
+        "subject": "FocusZone Study Report",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "4b3d0fcf-b428-4834-806a-1b1e4652a8de",
+      "name": "Send a message",
+      "webhookId": "2369cf3e-3793-4a2b-8c9c-7e13ee2a2b2c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VIaqwiPJDWIVk0ED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<style>\n  /* Base Styles */\n  body { margin: 0; padding: 0; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f0f2f5; color: #333; }\n  .container { max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }\n  \n  /* Header */\n  .header { background: linear-gradient(135deg, #4CAF50, #2E7D32); color: white; padding: 30px 20px; text-align: center; }\n  .header h1 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px; }\n  .header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }\n\n  /* Metrics Grid */\n  .metrics-container { padding: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }\n  .metric-card { flex: 1; min-width: 140px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; text-align: center; }\n  .metric-card strong { display: block; font-size: 22px; color: #2E7D32; margin-bottom: 4px; }\n  .metric-card span { font-size: 12px; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }\n  \n  /* Icons (Emojis as fallback) */\n  .icon { font-size: 20px; margin-bottom: 5px; display: block; }\n\n  /* AI Advice Section */\n  .advice-section { padding: 0 30px 30px; }\n  .advice-card { background-color: #fff8e1; border-left: 4px solid #ffb300; padding: 20px; border-radius: 4px; position: relative; }\n  .advice-title { font-weight: bold; color: #ff8f00; margin-bottom: 8px; display: block; font-size: 14px; text-transform: uppercase; }\n  .advice-text { font-style: italic; line-height: 1.5; color: #444; font-size: 16px; }\n\n  /* Footer */\n  .footer { background-color: #f8f9fa; padding: 15px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #eee; }\n</style>\n</head>\n<body>\n\n<div class=\"container\">\n  <div class=\"header\">\n    <h1>FocusZone Report</h1>\n    <p>Your Environment Analysis</p>\n  </div>\n\n  <div class=\"metrics-container\">\n    <div class=\"metric-card\">\n      <span class=\"icon\">🌡️</span>\n      <strong>{{ $('Webhook').first().json.body.data.split(\",\")[0].split(\": \")[1] }}</strong>\n      <span>Temp</span>\n    </div>\n    \n    <div class=\"metric-card\">\n      <span class=\"icon\">💧</span>\n      <strong>{{ $('Webhook').first().json.body.data.split(\",\")[1].split(\": \")[1] }}</strong>\n      <span>Humidity</span>\n    </div>\n    \n    <div class=\"metric-card\">\n      <span class=\"icon\">🔊</span>\n      <strong>{{ $('Webhook').first().json.body.data.split(\",\")[2].split(\": \")[1] }} dB</strong>\n      <span>Noise</span>\n    </div>\n  </div>\n\n  <div class=\"advice-section\">\n    <div class=\"advice-card\">\n      <span class=\"advice-title\">💡 Study Coach Says:</span>\n      <div class=\"advice-text\">\n        \"{{ $('Message a model').first().json.content.parts[0].text }}\"\n      </div>\n    </div>\n  </div>\n\n  <div class=\"footer\">\n    Generated by Google Gemini AI • {{ new Date().toLocaleString() }}\n  </div>\n</div>\n\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "219ac97f-5202-4015-82dc-3184df5b6f1e",
+      "name": "HTML"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f40303f-5179-4990-8c05-85434ef04204",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ddc12889e55502ec8a29413cfb4a07519341ca99dffbeeac9c7186bd55c5cd0a"
+  },
+  "id": "s5nDWB9p1BHz7yqK",
+  "tags": []
+}
