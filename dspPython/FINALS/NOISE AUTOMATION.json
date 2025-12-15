@@ -1,0 +1,180 @@
+{
+  "name": "NOISE",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "mataasnakahoy@gmail.com",
+        "subject": "Barangay Noise Monitoring Report – Violation Triggered",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <style>\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n        \n        body {\n            margin: 0;\n            padding: 20px;\n            background: #0a0e17;\n            font-family: 'Segoe UI', system-ui, sans-serif;\n            min-height: 100vh;\n        }\n        \n        .email-container {\n            width: 100%;\n            max-width: 700px;\n            margin: 0 auto;\n            background: #0f1525;\n            border-radius: 20px;\n            overflow: hidden;\n            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);\n            border: 1px solid #1e2536;\n        }\n        \n        /* HEADER */\n        .header {\n            background: linear-gradient(90deg, #0066ff 0%, #00ccff 100%);\n            padding: 40px 30px;\n            text-align: center;\n        }\n        \n        .header h1 {\n            color: white;\n            font-size: 32px;\n            font-weight: 700;\n            margin: 0;\n            line-height: 1.2;\n        }\n        \n        .header .subtitle {\n            color: rgba(255,255,255,0.9);\n            font-size: 16px;\n            margin-top: 8px;\n            font-weight: 400;\n        }\n        \n        /* DATA SECTION */\n        .data-section {\n            padding: 40px 30px;\n            background: #141b2d;\n        }\n        \n        .data-grid {\n            display: flex;\n            justify-content: space-between;\n            gap: 20px;\n        }\n        \n        .data-card {\n            background: rgba(20, 27, 45, 0.9);\n            border-radius: 16px;\n            padding: 25px 20px;\n            text-align: center;\n            border: 1px solid rgba(0, 102, 255, 0.3);\n            flex: 1;\n            min-width: 0;\n        }\n        \n        .data-icon {\n            font-size: 32px;\n            margin-bottom: 15px;\n            display: block;\n            height: 40px;\n        }\n        \n        .data-label {\n            color: #8a9bb0;\n            font-size: 13px;\n            font-weight: 600;\n            text-transform: uppercase;\n            letter-spacing: 1px;\n            margin-bottom: 12px;\n            display: block;\n            white-space: nowrap;\n            overflow: hidden;\n            text-overflow: ellipsis;\n        }\n        \n        .data-value {\n            font-size: 26px;\n            font-weight: 700;\n            color: white;\n            line-height: 1.2;\n            word-wrap: break-word;\n            overflow-wrap: break-word;\n        }\n        \n        .time-value {\n            color: #00ccff;\n            font-size: 20px;\n        }\n        \n        .noise-value {\n            color: #ff3366;\n        }\n        \n        .limit-value {\n            color: #00ff99;\n        }\n        \n        /* AI SECTION */\n        .ai-section {\n            padding: 40px 30px;\n            background: #0f1525;\n            border-top: 1px solid #1e2536;\n        }\n        \n        .ai-title {\n            text-align: center;\n            color: white;\n            font-size: 22px;\n            font-weight: 600;\n            margin-bottom: 25px;\n            text-transform: uppercase;\n            letter-spacing: 2px;\n            color: #00ccff;\n        }\n        \n        .ai-box {\n            background: rgba(20, 27, 45, 0.9);\n            border-radius: 16px;\n            padding: 30px;\n            border: 1px solid rgba(0, 204, 255, 0.3);\n        }\n        \n        .ai-message {\n            color: white;\n            font-size: 18px;\n            line-height: 1.5;\n            text-align: center;\n            word-wrap: break-word;\n            overflow-wrap: break-word;\n            font-style: italic;\n        }\n        \n        /* FOOTER */\n        .footer {\n            padding: 30px;\n            background: #0a0e17;\n            border-top: 1px solid #1e2536;\n        }\n        \n        .footer-info {\n            text-align: center;\n        }\n        \n        .report-time {\n            color: #8a9bb0;\n            font-size: 14px;\n            margin-bottom: 20px;\n        }\n        \n        .creator {\n            color: #00ccff;\n            font-size: 20px;\n            font-weight: 700;\n            margin: 20px 0;\n        }\n        \n        .disclaimer {\n            color: #8a9bb0;\n            font-size: 13px;\n            line-height: 1.4;\n            margin-top: 25px;\n            font-style: italic;\n        }\n        \n        /* RESPONSIVE */\n        @media (max-width: 600px) {\n            .data-grid {\n                flex-direction: column;\n                gap: 15px;\n            }\n            \n            .header h1 {\n                font-size: 28px;\n            }\n            \n            .data-section {\n                padding: 30px 20px;\n            }\n            \n            .ai-section {\n                padding: 30px 20px;\n            }\n            \n            .ai-title {\n                font-size: 20px;\n            }\n            \n            .ai-message {\n                font-size: 16px;\n            }\n            \n            .data-value {\n                font-size: 22px;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <!-- HEADER -->\n        <div class=\"header\">\n            <h1>BARANGAY NOISE INTELLIGENCE</h1>\n            <div class=\"subtitle\">Advanced Monitoring System</div>\n        </div>\n        \n        <!-- DATA SECTION -->\n        <div class=\"data-section\">\n            <div class=\"data-grid\">\n                <div class=\"data-card\">\n                    <div class=\"data-icon\">⏰</div>\n                    <div class=\"data-label\">Detection Time</div>\n                    <div class=\"data-value time-value\">{{ $('CLEANUP').item.json.localTime }}</div>\n                </div>\n                \n                <div class=\"data-card\">\n                    <div class=\"data-icon\">📊</div>\n                    <div class=\"data-label\">Noise Intensity</div>\n                    <div class=\"data-value noise-value\">{{ $('Webhook').item.json.body.noise }} dB</div>\n                </div>\n                \n                <div class=\"data-card\">\n                    <div class=\"data-icon\">⚠️</div>\n                    <div class=\"data-label\">Barangay Limit</div>\n                    <div class=\"data-value limit-value\">2500 dB</div>\n                </div>\n            </div>\n        </div>\n        \n        <!-- AI SECTION -->\n        <div class=\"ai-section\">\n            <div class=\"ai-title\">\n                AI BARANGAY ANALYSIS\n            </div>\n            \n            <div class=\"ai-box\">\n                <div class=\"ai-message\">\n                    {{ $json.output }}\n                </div>\n            </div>\n        </div>\n        \n        <!-- FOOTER -->\n        <div class=\"footer\">\n            <div class=\"footer-info\">\n                <div class=\"report-time\">\n                    Report Generated: {{ $('CLEANUP').item.json.localTime }}\n                </div>\n                \n                <div class=\"creator\">\n                    CREATED BY: JANSSEN TENORIO\n                </div>\n                \n                <div class=\"disclaimer\">\n                    This is an automated report from the Barangay Noise Monitoring System.\n                </div>\n            </div>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        460
+      ],
+      "id": "3e3243c9-8f78-462c-8b12-a8310e1fc09e",
+      "name": "Gmail",
+      "webhookId": "52d9b447-8170-4c8e-ae3b-0a2f875a4d72",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kFR99NHB2uI8vjAZ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        940,
+        460
+      ],
+      "id": "9f2509a1-5f96-41c6-ae9e-29e49de87019",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=NOISE LEVEL:{{ $('Webhook').item.json.body.noise }}\nTIME:{{ $json.localTime }}\n\n{{ $('Webhook').item.json.body.message }}\n\nBarangay Noise Limit: 2500 and below",
+        "options": {
+          "systemMessage": "You are a Barangay Noise Violation Report AI. You will receive data in this exact format:\n\nNOISE LEVEL:<value>\nTIME:<timestamp>\n<alert description>\n\nYour task:\n\nCreate a short, professional incident report intended for barangay officials, stating that excessive noise was detected and sustained long enough to trigger an alert. The report must:\n\n- Mention the noise level and timestamp.\n- Confirm that the reading exceeded the barangay’s allowable noise limit.\n- Note that the disturbance persisted for the duration required to trigger the alert.\n- Suggest that barangay personnel may conduct verification if the noise continues.\n\nTone: formal, concise, and suitable for an official barangay log or monitoring summary.\n\nRules:\n- Keep the report 1–3 sentences only.\n- Output only the incident report, with no extra commentary or formatting.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        620,
+        440
+      ],
+      "id": "0b9ecc24-74f6-403a-bb38-4382df5037be",
+      "name": "AI NOISE"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "meta-llama-3.1-8b-instruct",
+          "mode": "list",
+          "cachedResultName": "meta-llama-3.1-8b-instruct"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        600
+      ],
+      "id": "c8c1ef64-bd24-44df-a6c9-d3f4351a6775",
+      "name": "AI",
+      "credentials": {
+        "openAiApi": {
+          "id": "uMP8K1mGHMnlyAzg",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const localNow = new Date().toLocaleString(\"en-US\", { timeZone: \"Asia/Manila\" });\nreturn [{ json: { temperature: $json.temperature, humidity: $json.humidity, localTime: localNow } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        440
+      ],
+      "id": "983c4e50-1614-476a-8a9e-efc7f3bc77bb",
+      "name": "CLEANUP"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "055f12e6-ca7d-4363-a94a-1e7c8444f7f9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        180,
+        440
+      ],
+      "id": "b12cd0b1-a956-46b0-8597-feae2a2f45a2",
+      "name": "Webhook",
+      "webhookId": "055f12e6-ca7d-4363-a94a-1e7c8444f7f9"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI NOISE": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI NOISE",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CLEANUP": {
+      "main": [
+        [
+          {
+            "node": "AI NOISE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "CLEANUP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9bb44adc-d58e-4445-864c-1a7b7a1c89bb",
+  "meta": {
+    "instanceId": "9057eb3864f3a9cc8a1b3f7bea1eb4aa1caa98d077230445b69b0cc6b9e4124f"
+  },
+  "id": "cSpElLDkvg0Usrae",
+  "tags": []
+}
