@@ -1,0 +1,268 @@
+{
+  "name": "Audio with HTTP AI",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "audio",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "671a4ee2-e942-462c-8a22-a0fb53f9944a",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        112,
+        224
+      ],
+      "webhookId": "audio-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.db_level}}",
+              "operation": "gt",
+              "value2": 70
+            }
+          ]
+        }
+      },
+      "id": "fd41c911-d0e6-4835-9afd-fc2697cc3c05",
+      "name": "Check if Loud >70dB",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        480,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.dominant_freq}}",
+              "operation": "lt",
+              "value2": 300
+            }
+          ]
+        }
+      },
+      "id": "24be4531-b96a-4d7a-b262-f515fd899ad2",
+      "name": "Check Low Frequency",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        320,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Add more classifications:\nif (isLoud && data.dominant_freq > 4000) soundType = 'siren_or_alarm';\nif (!isLoud && data.dominant_freq > 1000 && data.dominant_freq < 2000) \n  soundType = 'human_voice_possible';"
+      },
+      "id": "ba031287-41b6-4df3-aa1c-505b6ef418e7",
+      "name": "Process Audio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        768,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "2220478@ub.edu.ph",
+        "toEmail": "jpojales14@gmail.com",
+        "subject": "Audio Alert - {{$json.soundType}}",
+        "options": {}
+      },
+      "id": "1ce473cf-40a5-4ab9-89a2-5e87dafd8c3d",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        208
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "pB2DGl2OQo0Jv1Ot",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Current thresholds:\nif (data.original.db_level > 80) classification = 'very_loud';\nif (data.original.db_level > 70 && data.original.dominant_freq > 2000) \n  classification = 'alarm_possible';"
+      },
+      "id": "291511ea-9df9-4cce-9525-87c4246f0fd0",
+      "name": "Mock AI Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        784,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Response Body:\n={\n  \"status\": \"processed\",\n  \"device_id\": \"{{$json.device_id}}\",\n  \"alert_sent\": {{$json.email_sent}},\n  \"analysis\": {{JSON.stringify($json.analysis)}}\n}",
+        "options": {}
+      },
+      "id": "7fe245c2-8f22-4d55-b583-fdd46421f3b0",
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "location",
+              "value": "living_room"
+            },
+            {
+              "name": "sensor_type",
+              "value": "INMP441"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e508a503-415d-48b1-9eb0-6c1c97240e9b",
+      "name": "Add Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        320,
+        224
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Check if Loud >70dB",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Low Frequency",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Loud >70dB": {
+      "main": [
+        [
+          {
+            "node": "Process Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mock AI Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Low Frequency": {
+      "main": [
+        [
+          {
+            "node": "Process Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Audio": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mock AI Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock AI Analysis": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Context": {
+      "main": [
+        [
+          {
+            "node": "Check if Loud >70dB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false,
+    "errorWorkflow": "PRsA4cAGdVx1KVF3"
+  },
+  "versionId": "cd933c68-dd68-4b15-8361-611ab0449649",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "45c9a498d1586b2fd34135d4f80e5c7cdaebcc292923a02ed784bea8c8157c22"
+  },
+  "id": "PRsA4cAGdVx1KVF3",
+  "tags": []
+}
