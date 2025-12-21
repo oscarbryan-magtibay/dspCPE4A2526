@@ -1,0 +1,325 @@
+{
+  "name": "RiceGuardian",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rice-guardian",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "46d86728-a4dc-4973-9aaf-36ffb4aea229",
+      "name": "Webhook",
+      "webhookId": "5bbfb5de-9656-4b2c-8886-d31730af5f0d"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Role: You are the Rice Guardian, a smart inventory assistant.\n\nSensor Data:\n\nCurrent Rice Level: {{ $json.body.level_percent }}%\n\nHumidity: {{ $json.body.humidity }}%\n\nLogic:\n\nCritical (< 20%): \"⚠️ Critical Low Stock. You have less than 20% remaining. Please restock immediately.\"\n\nLow (20% - 40%): \"📉 Stock is getting low. Plan to buy rice soon.\"\n\nHealthy (> 40%): \"✅ Rice levels are optimal. System is monitoring for freshness.\"\n\nTask: Write a short, helpful sentences status update for the user. You can add some suggestions on your own words for the user to do.\n\n\"Output ONLY the raw text message. Do not format it as JSON or use brackets.\""
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "686c1af4-6b69-4a53-87f0-f8df7793c16e",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HOgvXph2eFSK902q",
+          "name": "Google Gemini(PaLM) Api account 8"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Rice Guardian Daily Report</title>\n    <style>\n        /* RESET & BASE */\n        body { margin: 0; padding: 0; background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing: antialiased; }\n        table { border-spacing: 0; border-collapse: collapse; }\n        td { padding: 0; }\n        \n        /* LAYOUT */\n        .wrapper { width: 100%; table-layout: fixed; background-color: #f0f2f5; padding: 40px 0; }\n        .card { max-width: 600px; background-color: #ffffff; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }\n        \n        /* HEADER */\n        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; color: white; }\n        .header h1 { margin: 0; font-size: 22px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; }\n        .date-badge { display: inline-block; background-color: rgba(255,255,255,0.2); border-radius: 20px; padding: 5px 15px; margin-top: 10px; font-size: 13px; }\n        \n        /* HERO SECTION (Level) */\n        .hero { padding: 40px 30px; text-align: center; border-bottom: 1px solid #f0f0f0; }\n        .level-label { color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 15px; }\n        .level-number { color: #111827; font-size: 72px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -2px; }\n        .level-unit { font-size: 28px; color: #9ca3af; vertical-align: super; font-weight: 400; }\n        \n        /* PROGRESS BAR */\n        .progress-container { background-color: #f3f4f6; border-radius: 10px; height: 12px; width: 100%; max-width: 300px; margin: 20px auto 10px auto; overflow: hidden; }\n        .progress-fill { height: 100%; background-color: #10b981; border-radius: 10px; transition: width 0.5s ease; }\n        \n        /* AI BOX */\n        .ai-box { background-color: #f8fafc; border: 1px solid #e2e8f0; margin: 30px; padding: 25px; border-radius: 8px; position: relative; }\n        .ai-icon { position: absolute; top: -15px; left: 20px; background-color: #3b82f6; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2); }\n        .ai-text { color: #334155; font-size: 15px; line-height: 1.6; font-style: italic; }\n\n        /* METRICS GRID */\n        .stats-grid { width: 100%; border-top: 1px solid #f0f0f0; }\n        .stat-col { width: 50%; text-align: center; padding: 25px; }\n        .stat-val { font-size: 24px; font-weight: 700; color: #1e293b; }\n        .stat-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; }\n        \n        /* FOOTER */\n        .footer { text-align: center; padding: 30px; color: #94a3b8; font-size: 12px; line-height: 1.5; }\n        .footer a { color: #64748b; text-decoration: none; font-weight: 600; }\n    </style>\n</head>\n<body>\n    <div class=\"wrapper\">\n        <div class=\"card\">\n            <div class=\"header\">\n                <h1>🍚 Daily Status Report</h1>\n                <div class=\"date-badge\">Generated: {{ new Date().toLocaleDateString() }}</div>\n            </div>\n\n            <div class=\"hero\">\n                <div class=\"level-label\">Current Rice Inventory</div>\n                \n                <div class=\"level-number\">\n                    {{ $('Webhook').item.json.body.level_percent }}<span class=\"level-unit\">%</span>\n                </div>\n\n                <div class=\"progress-container\">\n                    <div class=\"progress-fill\" style=\"width: {{ $('Webhook').item.json.body.level_percent }}%;\"></div>\n                </div>\n\n                <div style=\"color: #94a3b8; font-size: 13px; margin-top: 10px;\">\n                    Sensor Depth: {{ $('Webhook').item.json.body.distance_mm }}mm\n                </div>\n            </div>\n\n            <div class=\"ai-box\">\n                <span class=\"ai-icon\">✨ AI Analysis</span>\n                <div class=\"ai-text\">\n                    {{ $json.candidates[0].content.parts[0].text }}\n                </div>\n            </div>\n\n            <table class=\"stats-grid\">\n                <tr>\n                    <td class=\"stat-col\" style=\"border-right: 1px solid #f0f0f0;\">\n                        <div class=\"stat-val\">{{ $('Webhook').item.json.body.humidity }}%</div>\n                        <div class=\"stat-label\">Humidity</div>\n                    </td>\n                    <td class=\"stat-col\">\n                        <div class=\"stat-val\">{{ $('Webhook').item.json.body.temperature }}°C</div>\n                        <div class=\"stat-label\">Temperature</div>\n                    </td>\n                </tr>\n            </table>\n        </div>\n\n        <div class=\"footer\">\n            <strong>Rice Guardian IoT System</strong><br>\n            Powered by ESP32 & n8n Automation<br>\n            <br>\n            <a href=\"#\">Open Dashboard</a>\n        </div>\n    </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "96ffe1d3-d7d8-4b96-b0aa-d5f2224b5927",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0bf88c6a-2330-4dc6-aba6-e7299a6cec6c",
+              "leftValue": "={{ $json.body.humidity }}",
+              "rightValue": 40,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        112
+      ],
+      "id": "39c93f1e-55bf-4239-8567-96a12efc2d83",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>High Humidity Alert</title>\n    <style>\n        /* RESET & BASE */\n        body { margin: 0; padding: 0; background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing: antialiased; }\n        table { border-spacing: 0; border-collapse: collapse; }\n        td { padding: 0; }\n        \n        /* LAYOUT */\n        .wrapper { width: 100%; table-layout: fixed; background-color: #f0f2f5; padding: 40px 0; }\n        .card { max-width: 600px; background-color: #ffffff; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #fee2e2; }\n        \n        /* HEADER - URGENT RED THEME */\n        .header { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); padding: 30px; text-align: center; color: white; }\n        .header h1 { margin: 0; font-size: 24px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 800; }\n        .alert-badge { display: inline-block; background-color: rgba(255,255,255,0.25); border-radius: 20px; padding: 5px 15px; margin-top: 10px; font-size: 13px; font-weight: bold; }\n        \n        /* HERO SECTION (Humidity Focus) */\n        .hero { padding: 40px 30px; text-align: center; border-bottom: 1px solid #f0f0f0; background-color: #fff1f2; }\n        .level-label { color: #991b1b; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 15px; }\n        .level-number { color: #dc2626; font-size: 72px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -2px; }\n        .level-unit { font-size: 28px; color: #ef4444; vertical-align: super; font-weight: 400; }\n        .sub-alert { color: #b91c1c; font-weight: bold; margin-top: 10px; font-size: 14px; }\n        \n        /* AI BOX */\n        .ai-box { background-color: #fffaf0; border-left: 4px solid #f59e0b; margin: 30px; padding: 25px; border-radius: 4px; position: relative; }\n        .ai-title { color: #b45309; font-weight: bold; font-size: 13px; text-transform: uppercase; margin-bottom: 10px; display: block; }\n        .ai-text { color: #451a03; font-size: 16px; line-height: 1.6; font-style: italic; }\n\n        /* METRICS GRID */\n        .stats-grid { width: 100%; border-top: 1px solid #f0f0f0; }\n        .stat-col { width: 50%; text-align: center; padding: 25px; }\n        .stat-val { font-size: 20px; font-weight: 700; color: #1e293b; }\n        .stat-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; }\n        \n        /* FOOTER */\n        .footer { text-align: center; padding: 30px; color: #94a3b8; font-size: 12px; line-height: 1.5; }\n    </style>\n</head>\n<body>\n    <div class=\"wrapper\">\n        <div class=\"card\">\n            <div class=\"header\">\n                <h1>⚠️ Bukbok Risk Alert</h1>\n                <div class=\"alert-badge\">ACTION REQUIRED</div>\n            </div>\n\n            <div class=\"hero\">\n                <div class=\"level-label\">Moisture Level Detected</div>\n                \n                <div class=\"level-number\">\n                    {{ $('Webhook').item.json.body.humidity }}<span class=\"level-unit\">%</span>\n                </div>\n\n                <div class=\"sub-alert\">\n                    Environment Critical for Weevil Growth\n                </div>\n            </div>\n\n            <div class=\"ai-box\">\n                <span class=\"ai-title\">🤖 Guardian AI Advice</span>\n                <div class=\"ai-text\">\n                    {{ $json.content.parts[0].text }}\n                </div>\n            </div>\n\n            <table class=\"stats-grid\">\n                <tr>\n                    <td class=\"stat-col\" style=\"border-right: 1px solid #f0f0f0;\">\n                        <div class=\"stat-val\">{{ $('Webhook').item.json.body.temperature }}°C</div>\n                        <div class=\"stat-label\">Temperature</div>\n                    </td>\n                    <td class=\"stat-col\">\n                        <div class=\"stat-val\">{{ $('Webhook').item.json.body.level_percent }}%</div>\n                        <div class=\"stat-label\">Current Rice Stock</div>\n                    </td>\n                </tr>\n            </table>\n        </div>\n\n        <div class=\"footer\">\n            <strong>Rice Guardian IoT System</strong><br>\n            Protecting your grain from moisture & pests.<br>\n        </div>\n    </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        160
+      ],
+      "id": "3db64884-3002-4b39-be0b-b6c1ffe3a050",
+      "name": "HTML1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the \"Memory\" of this workflow\nconst staticData = $getWorkflowStaticData('global');\n\n// Get the last time we sent an alert (default to 0 if never sent)\nconst lastAlert = staticData.lastStockAlert || 0; // Renamed variable slightly to reflect general usage\nconst now = new Date().getTime();\n\n// --- TIMER SETTING ---\n// FOR TESTING: 1 Minute\nconst timeLimit = 1 * 60 * 1000; \n// FOR REAL (24 Hours): const timeLimit = 24 * 60 * 60 * 1000;\n\n// --- LOGIC START ---\n\n// Check if the time limit has passed since the last alert\nif (now - lastAlert > timeLimit) {\n    // Yes, it is time for the daily (or minutely) update!\n    \n    // 1. Update the memory to right now\n    staticData.lastStockAlert = now;\n    \n    // 2. Send the report (Pass the item through)\n    return items;\n} else {\n    // No, it's too soon.\n    // Stop the workflow.\n    return [];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        0
+      ],
+      "id": "9dd4241e-4039-4c33-a3bb-b1a1cd9d9ddf",
+      "name": "Daily status update TIMER"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the \"Memory\" of this workflow\nconst staticData = $getWorkflowStaticData('global');\n\n// --- UNIQUE MEMORY KEY ---\n// We use 'lastBukbokAlert' so it tracks separately from the Rice Level\nconst lastAlert = staticData.lastBukbokAlert || 0; \nconst now = new Date().getTime();\n\n// --- TIMER SETTING ---\n// FOR TESTING: 1 Minute\nconst timeLimit = 1 * 60 * 1000; \n// FOR REAL (30 Mins): const timeLimit = 30 * 60 * 1000;\n\n// --- LOGIC START ---\n\n// CHECK TIMER:\n// This code assumes the humidity is ALREADY high (checked by the previous IF node).\n// We just check if enough time has passed to send another alert.\n\nif (now - lastAlert > timeLimit) {\n  // It has been more than the time limit (1 min for now)\n  staticData.lastBukbokAlert = now; // Update the memory timestamp\n  return items; // Allow the alert to proceed\n} else {\n  // Too soon! Block the spam.\n  return []; // Stop the workflow (No email)\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        160
+      ],
+      "id": "e8866dc4-8aa1-4e38-8415-2d5a7352436c",
+      "name": "Anti spam timer for bukbok alert"
+    },
+    {
+      "parameters": {
+        "sendTo": "2220433@ub.edu.ph",
+        "subject": "Daily Status Report - The Rice-Guardian (AI-Powered Smart Silo)",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "68a4dbfb-f342-411f-9573-a914f2120c12",
+      "name": "Daily Status Report",
+      "webhookId": "f8c919e1-e1c0-4686-bb06-2bc58bf11ee2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VIaqwiPJDWIVk0ED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "2220433@ub.edu.ph",
+        "subject": "Bukbok Alert! - The Rice-Guardian (AI-Powered Smart Silo)",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1328,
+        160
+      ],
+      "id": "0bbd2884-128f-4617-bb24-2db37227d230",
+      "name": "Bukbok Alert",
+      "webhookId": "81cd233b-137a-4566-9f68-acebc09ab383",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VIaqwiPJDWIVk0ED",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are the \"Rice Guardian,\" an intelligent IoT system protecting a rice bin.\n\nI have detected DANGEROUS conditions in the storage bin:\n- Humidity: {{ $('Webhook').item.json.body.humidity }}%\n- Temperature: {{ $('Webhook').item.json.body.temperature }}°C\n\nContext: High humidity (above 60-70%) significantly increases the risk of Rice Weevils (Bukbok) hatching and mold growth.\n\nTask: Write a short, urgent, and helpful alert message for the user.\n1. Warn them that the current humidity is unsafe.\n2. Suggest an immediate action (e.g., \"Add desiccants,\" \"Air out the bin,\" \"Check for visible bugs\").\n3. Keep it under 3 sentences.\n\nIMPORTANT: Output ONLY the raw text message. Do not use JSON, do not use brackets, and do not use quotation marks around the response."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        160
+      ],
+      "id": "dd98e52a-b5d1-4a05-84ac-faf6f944ada8",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HOgvXph2eFSK902q",
+          "name": "Google Gemini(PaLM) Api account 8"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Daily status update TIMER",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Daily Status Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Anti spam timer for bukbok alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Bukbok Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily status update TIMER": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anti spam timer for bukbok alert": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8a7a8cb3-2665-40c7-bdf7-d8dbc48ef2db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ddc12889e55502ec8a29413cfb4a07519341ca99dffbeeac9c7186bd55c5cd0a"
+  },
+  "id": "e1AuJsvq3Y1FTbW4",
+  "tags": []
+}
